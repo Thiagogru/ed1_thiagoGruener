@@ -4,4 +4,4 @@ A loja escolhida para simular foi uma loja de jogos eletrônicos para a platafor
 Nesta loja será implementadas as funcionalidades de busca, compra, pagamento e visualização da biblioteca de jogos do cliente
 A busca poderá ser feita por nome do jogo ou suas tags ("gêneros")
 
-Relatórios relevantes a serem realizados são: jogos mais comprados, métodos de pagamento mais usados, média de valor gasto por clientese e jogos com mais horas jogadas.
+Relatórios relevantes a serem realizados são: jogos mais comprados, métodos de pagamento mais usados, média de valor gasto por clientes e jogos com mais horas jogadas.

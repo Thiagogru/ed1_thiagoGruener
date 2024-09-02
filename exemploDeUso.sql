@@ -1,52 +1,49 @@
--- Adicionando um novo jogo
-INSERT INTO Jogo (nome_jogo, description, price, data_launch, developer)
-VALUES ('jogo1', 'Um jogo de ação em que coisas ocorrem muito interessante legal top', 100.00, '2024-09-1', 'DevDeveloper');
+-- 1. Inserir um novo jogo
+INSERT INTO public.jogo (nome_jogo, description, price, data_launch, developer)
+VALUES ('jogoExemplo', 'Um exemplo de jogo que possui uma descrição mínima de 50 caracteres.', 59.99, '2023-01-01', 'DesenvolvedoraExemplo');
 
--- Associando o jogo a uma tag (gênero)
-INSERT INTO Jogo_tag (nome_jogo, nome_tag)
-VALUES ('jogo1', 'Ação');
+-- 2. Criar nova tag (gênero) e associá-la ao jogo
+INSERT INTO public.genero (nome_genero, description_genero)
+VALUES ('ação', 'Jogos que envolvem muita ação e aventura.');
 
--- Adicionando um novo cliente
-INSERT INTO Cliente (id_cliente, nome_cliente, cpf, email, senha, cep, adress_number, data_nasc, telefone)
-VALUES (99, 'João da Silva', '12345678901', 'joao.silva@email.com', 'senha123', '12345678', 10, '1990-05-15', '11987654321');
+INSERT INTO public.jogo_tag (nome_jogo, nome_tag)
+VALUES ('jogoExemplo', 'ação');
 
--- Criando um novo carrinho para o cliente (se ainda não existir)
-INSERT INTO Carrinho (id_carrinho)
-VALUES (1);
+-- 3. Inserir o novo cliente "Jorge Azevedo"
+INSERT INTO public.cliente (id_cliente, cpf, cep, adress_number, nome_cliente, email, data_nasc, telefone, senha)
+VALUES (nextval('public.cliente_id_cliente_seq'), '12345678901', '12345678', 100, 'Jorge Azevedo', 'jorge.azevedo@example.com', '1985-07-23', '21987654321', 'senhaSegura123');
 
-INSERT INTO carrinho_do_cliente (id_carrinho, id_cliente)
-VALUES (1, 1);
+-- 4. Criar um carrinho para o cliente
+INSERT INTO public.carrinho (id_carrinho, valor_carrinho, id_cliente)
+VALUES (nextval('public.carrinho_id_carrinho_seq'), 59.99, currval('public.cliente_id_cliente_seq'));
 
--- Adicionando o jogo ao carrinho do cliente
-INSERT INTO jogo_no_carrinho (id_carrinho, nome_jogo, valor_jogo)
-VALUES 	(1, 'jogo1', 
-        (SELECT price FROM Jogo WHERE nome_jogo = 'jogo1'));
+-- 5. Adicionar o jogo ao carrinho
+INSERT INTO public.jogo_no_carrinho (valor_jogo, id_carrinho, nome_jogo)
+VALUES (59.99, currval('public.carrinho_id_carrinho_seq'), 'jogoExemplo');
 
--- Criando uma nova compra associada ao carrinho
-INSERT INTO Compra (id_compra, valor_total, status)
-VALUES (1, 100.00, 'Pendente');
+-- 6. Criar uma compra com o carrinho
+INSERT INTO public.compra (id_compra, valor_total, status, id_carrinho)
+VALUES (nextval('public.compra_id_compra_seq'), 59.99, 'em andamento', currval('public.carrinho_id_carrinho_seq'));
 
--- Realizando o pagamento da compra
-INSERT INTO Pagamento (numero_pagamento, metodo, valor_final, nota_fiscal)
-VALUES (1, 'credito', 100.00,
-		123456789);
+-- 7. Realizar o pagamento da compra
+INSERT INTO public.pagamento (numero_pagamento, metodo, nota_fical, valor_final, id_compra)
+VALUES (nextval('public.pagamento_numero_pagamento_seq'), 'pix', '12345678901234567890', 59.99, currval('public.compra_id_compra_seq'));
 
--- Atualizando o status da compra para 'Pago'
-UPDATE Compra
-SET status = 'Pago'
-WHERE id_compra = 1;
+-- 8. Atualizar o status da compra para "pago"
+UPDATE public.compra
+SET status = 'pago'
+WHERE id_compra = currval('public.compra_id_compra_seq');
 
--- Adicionando o jogo à biblioteca do cliente
-INSERT INTO cliente_possui (id_cliente, nome_jogo, horas_jogadas)
-VALUES (99, 'jogo1', 0);
+-- 9. Adicionar o jogo à biblioteca do cliente
+INSERT INTO public.cliente_possui (id_cliente, nome_jogo, horas_jogadas)
+VALUES (currval('public.cliente_id_cliente_seq'), 'jogoExemplo', 0.00);
 
--- Atualizando a quantidade de horas jogadas para o cliente
-UPDATE cliente_possui
-SET horas_jogadas = 5
-WHERE id_cliente = 99
-  AND nome_jogo = 'jogo1';
+-- 10. Alterar a quantidade de horas jogadas
+UPDATE public.cliente_possui
+SET horas_jogadas = 5.5
+WHERE id_cliente = currval('public.cliente_id_cliente_seq')
+AND nome_jogo = 'jogoExemplo';
 
--- Adicionando uma review do cliente para o jogo
-INSERT INTO cliente_avalia (id_cliente, nome_jogo, nota, review)
-VALUES (99, 'jogo1', 5, 'Jogo ok');
-
+-- 11. Realizar uma avaliação do jogo
+INSERT INTO public.cliente_avalia (id_cliente, nome_jogo, nota, review)
+VALUES (currval('public.cliente_id_cliente_seq'), 'jogoExemplo', 4, 'Jogo muito bom, mas pode melhorar em alguns aspectos.');

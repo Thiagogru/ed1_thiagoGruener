@@ -1,0 +1,174 @@
+CREATE TABLE public.carrinho (
+    id_carrinho integer NOT NULL,
+    valor_carrinho numeric(10,2),
+    id_cliente integer NOT NULL
+);
+
+CREATE SEQUENCE public.carrinho_id_carrinho_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE public.carrinho_id_cliente_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE TABLE public.cliente (
+    id_cliente integer NOT NULL,
+    cpf character(11),
+    cep character(8),
+    adress_number smallint NOT NULL,
+    data_cadastro date DEFAULT CURRENT_DATE,
+    nome_cliente character varying(100) NOT NULL,
+    email character varying(100) NOT NULL,
+    data_nasc date,
+    telefone character varying(20) NOT NULL,
+    senha character varying(200) NOT NULL,
+    CONSTRAINT cliente_cep_check CHECK ((length(cep) = 8)),
+    CONSTRAINT cliente_cpf_check CHECK ((length(cpf) = 11)),
+    CONSTRAINT cliente_data_nasc_check CHECK ((data_nasc < CURRENT_DATE))
+)
+
+
+CREATE TABLE public.cliente_avalia (
+    id_cliente integer NOT NULL,
+    nome_jogo character varying(100) NOT NULL,
+    nota integer,
+    review text,
+    CONSTRAINT cliente_avalia_nota_check CHECK (((nota >= 0) AND (nota <= 5)))
+);
+
+
+CREATE SEQUENCE public.cliente_avalia_id_cliente_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE SEQUENCE public.cliente_id_cliente_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE TABLE public.cliente_possui (
+    id_cliente integer NOT NULL,
+    nome_jogo character varying(100) NOT NULL,
+    horas_jogadas numeric(10,2)
+);
+
+
+CREATE SEQUENCE public.cliente_possui_id_cliente_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE TABLE public.compra (
+    id_compra integer NOT NULL,
+    data_hora timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    valor_total numeric(10,2) NOT NULL,
+    status character varying(100),
+    id_carrinho integer NOT NULL
+);
+
+
+CREATE SEQUENCE public.compra_id_carrinho_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE SEQUENCE public.compra_id_compra_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE public.genero (
+    nome_genero character varying(100) NOT NULL,
+    description_genero text NOT NULL
+);
+
+
+CREATE TABLE public.jogo (
+    nome_jogo character varying(100) NOT NULL,
+    description text,
+    price numeric(10,2) NOT NULL,
+    data_launch date,
+    developer character varying(100) NOT NULL,
+    CONSTRAINT jogo_data_launch_check CHECK ((data_launch <= CURRENT_DATE)),
+    CONSTRAINT jogo_description_check CHECK ((length(description) >= 50))
+);
+
+
+CREATE TABLE public.jogo_no_carrinho (
+    valor_jogo numeric(10,2),
+    id_carrinho integer NOT NULL,
+    nome_jogo character varying(100) NOT NULL
+);
+
+
+CREATE SEQUENCE public.jogo_no_carrinho_id_carrinho_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE TABLE public.jogo_tag (
+    nome_jogo character varying(100) NOT NULL,
+    nome_tag character varying(100) NOT NULL
+);
+
+CREATE TABLE public.pagamento (
+    numero_pagamento integer NOT NULL,
+    data_pagamento date DEFAULT CURRENT_DATE,
+    metodo character varying(7) NOT NULL,
+    nota_fical character(20) NOT NULL,
+    valor_final numeric(10,2) NOT NULL,
+    id_compra integer NOT NULL,
+    CONSTRAINT metodo CHECK (((metodo)::text = ANY ((ARRAY['boleto'::character varying, 'credito'::character varying, 'debito'::character varying, 'pix'::character varying])::text[])))
+);
+
+CREATE SEQUENCE public.pagamento_id_compra_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE SEQUENCE public.pagamento_numero_pagamento_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
